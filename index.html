@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal Expense Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+ 
+  <div class="tracker-wrapper">
+ 
+    <header class="tracker-header">
+      <h1>💳 Personal Expense Tracker</h1>
+    </header>
+ 
+    <div class="tracker-card">
+
+      <div class="history-bar">
+        <button class="history-btn" id="historyToggle">
+          🕐 Recent History &nbsp; <span class="close-x">✕</span>
+        </button>
+      </div>
+ 
+      <div class="summary-grid">
+        <div class="summary-card income">
+          <div class="summary-label">▲ Total Income</div>
+          <div class="summary-amount" id="totalIncome">$0.00</div>
+        </div>
+        <div class="summary-card expenses">
+          <div class="summary-label">▼ Total Expenses</div>
+          <div class="summary-amount" id="totalExpenses">$0.00</div>
+        </div>
+        <div class="summary-card balance">
+          <div class="summary-label">🗂 Remaining Balance</div>
+          <div class="summary-amount" id="remainingBalance">$0.00</div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-card">
+          <input type="text" id="itemName" placeholder="Enter Item Name" class="form-input" />
+          <input type="number" id="itemAmount" placeholder="Enter Amount ($)" class="form-input" />
+          <button class="add-btn" id="addExpenseBtn">+ Add Expense</button>
+        </div>
+
+        <div class="expense-list" id="expenseList">
+          <p class="empty-state">--- No expenses added yet ---</p>
+        </div>
+      </div>
+ 
+      <div class="history-panel" id="historyPanel" style="display:none;">
+        <h3>Recent History</h3>
+        <ul id="historyList">
+          <li class="empty-state">No history yet.</li>
+        </ul>
+      </div>
+ 
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
