@@ -9,4 +9,3 @@ let history = JSON.parse(localStorage.getItem('expenseTrackerHistory') || '[]');
 const addBtn = document.getElementById('addExpenseBtn');
 const historyToggle = document.getElementById('historyToggle');
 const historyPanel = document.getElementById('historyPanel');
- 
