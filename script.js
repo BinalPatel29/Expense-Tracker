@@ -9,3 +9,21 @@ let history = JSON.parse(localStorage.getItem('expenseTrackerHistory') || '[]');
 const addBtn = document.getElementById('addExpenseBtn');
 const historyToggle = document.getElementById('historyToggle');
 const historyPanel = document.getElementById('historyPanel');
+
+addBtn.addEventListener('click', () => {
+    const name = document.getElementById('itemName').value.trim();
+    const amount = parseFloat(document.getElementById('itemAmount').value);
+ 
+    if (!name || isNaN(amount) || amount <= 0) return;
+ 
+    history.push({ name, amount, date: new Date().toLocaleDateString() });
+    saveState();
+ 
+    updateUI();
+    document.getElementById('itemName').value = '';
+    document.getElementById('itemAmount').value = '';
+});
+ 
+historyToggle.addEventListener('click', () => {
+    historyPanel.style.display = historyPanel.style.display === 'none' ? 'block' : 'none';
+});
