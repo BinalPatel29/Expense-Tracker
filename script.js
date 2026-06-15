@@ -27,3 +27,14 @@ addBtn.addEventListener('click', () => {
 historyToggle.addEventListener('click', () => {
     historyPanel.style.display = historyPanel.style.display === 'none' ? 'block' : 'none';
 });
+
+function saveState() {
+    localStorage.setItem('expenseTrackerHistory', JSON.stringify(history));
+    localStorage.setItem('expenseTrackerIncome', totalIncome);
+}
+
+window.deleteItem = function(index) {
+    history.splice(index, 1);
+    saveState();
+    updateUI();
+}
