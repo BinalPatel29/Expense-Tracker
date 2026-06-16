@@ -22,6 +22,17 @@
         </button>
       </div>
  
+      <div class="warning-banner hidden" id="balanceWarning" aria-live="polite">
+        <strong>Warning:</strong> Expenses exceed income. Review your budget before adding more items.
+      </div>
+ 
+      <div class="income-setup hidden" id="incomeSetup">
+        <h2>Set your monthly income</h2>
+        <p>Enter your total monthly income to begin tracking expenses.</p>
+        <input type="number" id="incomeInput" class="income-input" placeholder="Monthly income ($)" min="0" />
+        <button class="income-save" id="saveIncomeBtn" disabled>Save income</button>
+      </div>
+ 
       <div class="summary-grid">
         <div class="summary-card income">
           <div class="summary-label">▲ Total Income</div>
