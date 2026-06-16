@@ -299,6 +299,23 @@ body {
   padding: 16px 20px;
 }
 
+.history-panel.hidden {
+  display: none;
+}
+
+.amount-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: red;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 .history-panel h3 {
   font-size: 0.95rem;
   color: #1b3a2b;
