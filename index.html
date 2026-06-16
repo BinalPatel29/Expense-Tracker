@@ -50,7 +50,7 @@
 
       <div class="form-section">
         <div class="form-card">
-          <input type="text" id="itemName" placeholder="Enter Item Name" class="form-input" />
+          <input type="text" id="itemName" placeholder="Enter Item Name" class="form-input" pattern="^[A-Za-z\s]+$" title="Only letters and spaces allowed" />
           <input type="number" id="itemAmount" placeholder="Enter Amount ($)" class="form-input" />
           <button class="add-btn" id="addExpenseBtn">+ Add Expense</button>
         </div>

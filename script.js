@@ -34,11 +34,15 @@ function updateIncomeSetup() {
     }
 }
 
+function isValidName(name) {
+    return /^[A-Za-z\s]+$/.test(name);
+}
+
 addBtn.addEventListener('click', () => {
     const name = itemNameInput.value.trim();
     const amount = parseFloat(itemAmountInput.value);
  
-    if (!name || isNaN(amount) || amount <= 0) return;
+    if (!name || !isValidName(name) || isNaN(amount) || amount <= 0) return;
  
     history.push({ name, amount, date: new Date().toLocaleDateString() });
     saveState();
