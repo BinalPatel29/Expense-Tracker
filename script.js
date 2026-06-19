@@ -20,6 +20,8 @@ const balanceWarningEl = document.getElementById('balanceWarning');
 const expenseListEl = document.getElementById('expenseList');
 const historyListEl = document.getElementById('historyList');
 
+const searchInput = document.getElementById('history-search');
+
 function hasIncome() {
     return totalIncome > 0;
 }
@@ -47,10 +49,17 @@ function addExpense() {
         return;
     }
 
-    history.push({ name, amount, date: new Date().toLocaleDateString() });
+    const currentDateTime = new Date().toLocaleString([], { 
+        dateStyle: 'short', 
+        timeStyle: 'short' 
+    });
+
+    history.push({ name, amount, date: currentDateTime });
     saveState();
     clearForm();
     updateUI();
+    
+    itemNameInput.focus();
 }
 
 function clearForm() {
@@ -65,9 +74,17 @@ function updateIncome(value) {
 }
 
 function deleteItem(index) {
-    history = history.filter((_, i) => i !== index);
-    saveState();
-    updateUI();
+    const currentSearch = searchInput.value.toLowerCase();
+    
+    const filtered = history.map((item, originalIndex) => ({ ...item, originalIndex }))
+                           .filter(item => item.name.toLowerCase().includes(currentSearch));
+    
+    if(filtered[index]) {
+        const actualIndex = filtered[index].originalIndex;
+        history = history.filter((_, i) => i !== actualIndex);
+        saveState();
+        updateUI();
+    }
 }
 
 function renderSummary() {
@@ -78,24 +95,34 @@ function renderSummary() {
     totalExpensesEl.textContent = `$${totalExpenses.toFixed(2)}`;
     remainingBalanceEl.textContent = `$${remainingBalance.toFixed(2)}`;
 
+    const balanceCard = document.querySelector('.summary-card.balance');
+
     if (remainingBalance < 0) {
-        remainingBalanceEl.classList.add('negative');
+        balanceCard.classList.add('negative-bg');
         balanceWarningEl.classList.remove('hidden');
     } else {
-        remainingBalanceEl.classList.remove('negative');
+        balanceCard.classList.remove('negative-bg');
         balanceWarningEl.classList.add('hidden');
     }
 }
 
 function renderExpenses() {
     expenseListEl.innerHTML = '';
+    
+    const currentSearch = searchInput.value.toLowerCase();
+    
+    const filteredHistory = history.filter(item => {
+        return item.name.toLowerCase().includes(currentSearch);
+    });
 
-    if (history.length === 0) {
-        expenseListEl.innerHTML = '<p class="empty-state">--- No expenses added yet ---</p>';
+    if (filteredHistory.length === 0) {
+        expenseListEl.innerHTML = currentSearch 
+            ? '<p class="empty-state">--- No matching expenses found ---</p>'
+            : '<p class="empty-state">--- No expenses added yet ---</p>';
         return;
     }
 
-    history.forEach((item, index) => {
+    filteredHistory.forEach((item, index) => {
         const expenseItem = document.createElement('div');
         expenseItem.className = 'expense-item';
 
@@ -126,13 +153,16 @@ function renderExpenses() {
 
 function renderHistory() {
     historyListEl.innerHTML = '';
+    
+    const currentSearch = searchInput.value.toLowerCase();
+    const filteredHistory = history.filter(item => item.name.toLowerCase().includes(currentSearch));
 
-    if (history.length === 0) {
+    if (filteredHistory.length === 0) {
         historyListEl.innerHTML = '<li class="empty-state">No history yet.</li>';
         return;
     }
 
-    history.forEach((item) => {
+    filteredHistory.forEach((item) => {
         const historyEntry = document.createElement('li');
         historyEntry.textContent = `${item.date} — ${item.name}: $${item.amount.toFixed(2)}`;
         historyListEl.appendChild(historyEntry);
@@ -176,6 +206,26 @@ function bindEvents() {
 
     historyToggle.addEventListener('click', () => {
         historyPanel.classList.toggle('hidden');
+    });
+
+    searchInput.addEventListener('input', () => {
+        updateUI();
+    });
+
+    const handleKeyboardSubmit = (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            addExpense();
+        }
+    };
+    itemNameInput.addEventListener('keydown', handleKeyboardSubmit);
+    itemAmountInput.addEventListener('keydown', handleKeyboardSubmit);
+
+    incomeInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && !saveIncomeBtn.disabled) {
+            event.preventDefault();
+            saveIncomeBtn.click();
+        }
     });
 }
 

@@ -16,10 +16,17 @@
  
     <div class="tracker-card">
 
-      <div class="history-bar">
-        <button class="history-btn" id="historyToggle">
-          🕐 Recent History &nbsp; <span class="close-x">✕</span>
-        </button>
+      <div class="search-actions-row">
+        <div class="search-container">
+          <input type="text" id="history-search" placeholder="Search transactions..." class="search-input" />
+          <span class="search-icon">🔍</span>
+        </div>
+
+        <div class="history-bar">
+          <button class="history-btn" id="historyToggle">
+            🕐 View Logs &nbsp; <span class="close-x">✕</span>
+          </button>
+        </div>
       </div>
  
       <div class="warning-banner hidden" id="balanceWarning" aria-live="polite">
@@ -61,14 +68,15 @@
       </div>
  
       <div class="history-panel hidden" id="historyPanel">
-        <h3>Recent History</h3>
+        <h3>Recent History</h3> 
         <ul id="historyList">
           <li class="empty-state">No history yet.</li>
         </ul>
       </div>
- 
-    </div>
-  </div>
+
+    </div> 
+  </div> 
+
   <script src="script.js"></script>
 </body>
 </html>
