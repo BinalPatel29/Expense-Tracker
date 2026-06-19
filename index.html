@@ -54,6 +54,16 @@
           <div class="summary-amount" id="remainingBalance">$0.00</div>
         </div>
       </div>
+       
+      <div class="income-setup hidden" id="editIncomeSetup">
+        <h2>Update your monthly income</h2>
+        <p>Enter a new monthly income amount.</p>
+        <input type="number" id="editIncomeInput" class="income-input" placeholder="Monthly income ($)" min="0" />
+        <div class="income-edit-actions">
+          <button class="income-save" id="saveEditIncomeBtn" disabled>Save</button>
+          <button class="income-cancel" id="cancelEditIncomeBtn" type="button">Cancel</button>
+        </div>
+      </div>
 
       <div class="form-section">
         <div class="form-card">

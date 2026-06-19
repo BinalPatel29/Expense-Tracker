@@ -20,6 +20,12 @@ const balanceWarningEl = document.getElementById('balanceWarning');
 const expenseListEl = document.getElementById('expenseList');
 const historyListEl = document.getElementById('historyList');
 
+const editIncomeBtn = document.getElementById('editIncomeBtn');
+const editIncomeSetup = document.getElementById('editIncomeSetup');
+const editIncomeInput = document.getElementById('editIncomeInput');
+const saveEditIncomeBtn = document.getElementById('saveEditIncomeBtn');
+const cancelEditIncomeBtn = document.getElementById('cancelEditIncomeBtn');
+
 const searchInput = document.getElementById('history-search');
 
 function hasIncome() {
@@ -45,7 +51,17 @@ function addExpense() {
     const name = itemNameInput.value.trim();
     const amount = parseFloat(itemAmountInput.value);
 
-    if (!name || !isValidName(name) || isNaN(amount) || amount <= 0) {
+     if (!name) {
+        itemNameInput.focus();
+        return;
+    }
+    if (!isValidName(name)) {
+        itemNameInput.focus();
+        itemNameInput.reportValidity();
+        return;
+    }
+    if (isNaN(amount) || amount <= 0) {
+        itemAmountInput.focus();
         return;
     }
 
@@ -53,6 +69,8 @@ function addExpense() {
         dateStyle: 'short', 
         timeStyle: 'short' 
     });
+
+    const id = (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`);
 
     history.push({ name, amount, date: currentDateTime });
     saveState();
@@ -73,18 +91,16 @@ function updateIncome(value) {
     updateUI();
 }
 
-function deleteItem(index) {
-    const currentSearch = searchInput.value.toLowerCase();
-    
-    const filtered = history.map((item, originalIndex) => ({ ...item, originalIndex }))
-                           .filter(item => item.name.toLowerCase().includes(currentSearch));
-    
-    if(filtered[index]) {
-        const actualIndex = filtered[index].originalIndex;
-        history = history.filter((_, i) => i !== actualIndex);
-        saveState();
-        updateUI();
-    }
+function deleteItem(id) {
+    const item = history.find(entry => entry.id === id);
+    if (!item) return;
+
+    const confirmed = window.confirm(`Delete "${item.name}" (-$${item.amount.toFixed(2)})? This can't be undone.`);
+    if (!confirmed) return;
+
+    history = history.filter(entry => entry.id !== id);
+    saveState();
+    updateUI();
 }
 
 function renderSummary() {
@@ -141,6 +157,7 @@ function renderExpenses() {
         deleteBtn.className = 'delete-btn';
         deleteBtn.type = 'button';
         deleteBtn.textContent = 'X';
+        deleteBtn.setAttribute('aria-label', `Delete ${item.name}`);
         deleteBtn.addEventListener('click', () => deleteItem(index));
 
         amountWrapper.appendChild(amountSpan);
@@ -172,9 +189,12 @@ function renderHistory() {
 function updateIncomeSetup() {
     if (hasIncome()) {
         incomeSetup.classList.add('hidden');
+        editIncomeBtn.classList.remove('hidden-inline');
         setFormEnabled(true);
     } else {
         incomeSetup.classList.remove('hidden');
+        editIncomeSetup.classList.add('hidden');
+        editIncomeBtn.classList.add('hidden-inline');
         setFormEnabled(false);
     }
 }

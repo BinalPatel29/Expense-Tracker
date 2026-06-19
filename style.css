@@ -90,6 +90,7 @@ body {
 .search-actions-row .history-bar {
   display: flex;
   justify-content: flex-end;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -257,6 +258,47 @@ body {
 
 .income-setup.hidden {
   display: none;
+}
+
+.edit-income-link {
+  background: none;
+  border: none;
+  color: #1b3a2b;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 6px;
+  opacity: 0.75;
+}
+
+.edit-income-link:hover {
+  opacity: 1;
+}
+
+.edit-income-link.hidden-inline {
+  display: none;
+}
+
+.income-edit-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.income-cancel {
+  background-color: transparent;
+  color: #556B5D;
+  border: 1px solid #C4D1C8;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.income-cancel:hover {
+  background-color: #F0F4F1;
 }
 
 .warning-banner {
