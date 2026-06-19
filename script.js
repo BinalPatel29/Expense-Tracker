@@ -19,6 +19,7 @@ const remainingBalanceEl = document.getElementById('remainingBalance');
 const balanceWarningEl = document.getElementById('balanceWarning');
 const expenseListEl = document.getElementById('expenseList');
 const historyListEl = document.getElementById('historyList');
+const exportBtn = document.getElementById('exportBtn');
 
 const editIncomeBtn = document.getElementById('editIncomeBtn');
 const editIncomeSetup = document.getElementById('editIncomeSetup');
@@ -51,7 +52,7 @@ function addExpense() {
     const name = itemNameInput.value.trim();
     const amount = parseFloat(itemAmountInput.value);
 
-     if (!name) {
+    if (!name) {
         itemNameInput.focus();
         return;
     }
@@ -65,18 +66,18 @@ function addExpense() {
         return;
     }
 
-    const currentDateTime = new Date().toLocaleString([], { 
-        dateStyle: 'short', 
-        timeStyle: 'short' 
+    const currentDateTime = new Date().toLocaleString([], {
+        dateStyle: 'short',
+        timeStyle: 'short'
     });
 
     const id = (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`);
 
-    history.push({ name, amount, date: currentDateTime });
+    history.push({ id, name, amount, date: currentDateTime });
     saveState();
     clearForm();
     updateUI();
-    
+
     itemNameInput.focus();
 }
 
@@ -124,21 +125,21 @@ function renderSummary() {
 
 function renderExpenses() {
     expenseListEl.innerHTML = '';
-    
+
     const currentSearch = searchInput.value.toLowerCase();
-    
+
     const filteredHistory = history.filter(item => {
         return item.name.toLowerCase().includes(currentSearch);
     });
 
     if (filteredHistory.length === 0) {
-        expenseListEl.innerHTML = currentSearch 
+        expenseListEl.innerHTML = currentSearch
             ? '<p class="empty-state">--- No matching expenses found ---</p>'
             : '<p class="empty-state">--- No expenses added yet ---</p>';
         return;
     }
 
-    filteredHistory.forEach((item, index) => {
+    filteredHistory.forEach((item) => {
         const expenseItem = document.createElement('div');
         expenseItem.className = 'expense-item';
 
@@ -158,7 +159,7 @@ function renderExpenses() {
         deleteBtn.type = 'button';
         deleteBtn.textContent = 'X';
         deleteBtn.setAttribute('aria-label', `Delete ${item.name}`);
-        deleteBtn.addEventListener('click', () => deleteItem(index));
+        deleteBtn.addEventListener('click', () => deleteItem(item.id));
 
         amountWrapper.appendChild(amountSpan);
         amountWrapper.appendChild(deleteBtn);
@@ -170,7 +171,7 @@ function renderExpenses() {
 
 function renderHistory() {
     historyListEl.innerHTML = '';
-    
+
     const currentSearch = searchInput.value.toLowerCase();
     const filteredHistory = history.filter(item => item.name.toLowerCase().includes(currentSearch));
 
@@ -197,6 +198,30 @@ function updateIncomeSetup() {
         editIncomeBtn.classList.add('hidden-inline');
         setFormEnabled(false);
     }
+}
+
+function exportToCsv() {
+    if (history.length === 0) {
+        window.alert('There are no expenses to export yet.');
+        return;
+    }
+
+    const rows = [['Date', 'Item', 'Amount']];
+    history.forEach(item => rows.push([item.date, item.name, item.amount.toFixed(2)]));
+
+    const csvContent = rows
+        .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+        .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `expenses-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 }
 
 function updateUI() {
@@ -228,6 +253,42 @@ function bindEvents() {
         historyPanel.classList.toggle('hidden');
     });
 
+    exportBtn.addEventListener('click', exportToCsv);
+
+    editIncomeBtn.addEventListener('click', () => {
+        editIncomeInput.value = totalIncome > 0 ? totalIncome : '';
+        editIncomeSetup.classList.remove('hidden');
+        saveEditIncomeBtn.disabled = !(totalIncome > 0);
+        editIncomeInput.focus();
+    });
+
+    cancelEditIncomeBtn.addEventListener('click', () => {
+        editIncomeSetup.classList.add('hidden');
+    });
+
+    editIncomeInput.addEventListener('input', () => {
+        const value = parseFloat(editIncomeInput.value);
+        saveEditIncomeBtn.disabled = isNaN(value) || value <= 0;
+    });
+
+    saveEditIncomeBtn.addEventListener('click', () => {
+        const value = parseFloat(editIncomeInput.value);
+        if (isNaN(value) || value <= 0) {
+            return;
+        }
+        updateIncome(value);
+        editIncomeSetup.classList.add('hidden');
+    });
+
+    editIncomeInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && !saveEditIncomeBtn.disabled) {
+            event.preventDefault();
+            saveEditIncomeBtn.click();
+        } else if (event.key === 'Escape') {
+            editIncomeSetup.classList.add('hidden');
+        }
+    });
+
     searchInput.addEventListener('input', () => {
         updateUI();
     });
@@ -250,10 +311,18 @@ function bindEvents() {
 }
 
 function init() {
+    let needsResave = false;
+    history = history.map(item => {
+        if (!item.id) {
+            needsResave = true;
+            return { ...item, id: (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`) };
+        }
+        return item;
+    });
+    if (needsResave) saveState();
+
     bindEvents();
     updateUI();
 }
-
-window.deleteItem = deleteItem;
 
 init();

@@ -23,6 +23,7 @@
         </div>
 
         <div class="history-bar">
+          <button class="history-btn" id="exportBtn" title="Export expenses to CSV">⭳ Export</button>
           <button class="history-btn" id="historyToggle">
             🕐 View Logs &nbsp; <span class="close-x">✕</span>
           </button>
@@ -52,9 +53,10 @@
         <div class="summary-card balance">
           <div class="summary-label">🗂 Remaining Balance</div>
           <div class="summary-amount" id="remainingBalance">$0.00</div>
+          <button class="edit-income-link" id="editIncomeBtn" type="button">Edit income</button>
         </div>
       </div>
-       
+
       <div class="income-setup hidden" id="editIncomeSetup">
         <h2>Update your monthly income</h2>
         <p>Enter a new monthly income amount.</p>
@@ -68,7 +70,7 @@
       <div class="form-section">
         <div class="form-card">
           <input type="text" id="itemName" placeholder="Enter Item Name" class="form-input" pattern="^[A-Za-z\s]+$" title="Only letters and spaces allowed" />
-          <input type="number" id="itemAmount" placeholder="Enter Amount ($)" class="form-input" />
+          <input type="number" id="itemAmount" placeholder="Enter Amount ($)" class="form-input" min="0.01" step="0.01" />
           <button class="add-btn" id="addExpenseBtn">+ Add Expense</button>
         </div>
 
